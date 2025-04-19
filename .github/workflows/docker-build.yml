@@ -28,7 +28,7 @@ on:
 jobs:
   build-and-push-landing-page:
     name: Build and Push Landing Page Docker Image
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
