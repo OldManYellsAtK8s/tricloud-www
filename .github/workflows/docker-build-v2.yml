@@ -10,8 +10,12 @@
 name: Publish Docker image
 
 on:
-  release:
-    types: [published]
+  # Trigger the action manually from the UI
+  workflow_dispatch:
+  # Trigger the action when a version tag is pushed
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching numeric semver tags, i.e., 1.0.0, 20.15.10
 
 jobs:
   push_to_registry:
