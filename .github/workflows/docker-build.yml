@@ -11,8 +11,8 @@
 
 # Script environment variables
 env:
-  DOCKER_IMAGE_NAME: my-image
-  DOCKER_REGISTRY: myregistry.mydomain.com
+  DOCKER_IMAGE_NAME: overcast-www
+  DOCKER_REGISTRY: registry.hub.docker.com/scaffa/overcast-www
 
 name: Build and Push Docker Image
 
