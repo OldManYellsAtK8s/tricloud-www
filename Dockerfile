@@ -1,3 +1,3 @@
 FROM nginx
-COPY . /usr/share/nginx/html
+COPY /maverix-theme /usr/share/nginx/html
 
