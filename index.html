@@ -6,7 +6,7 @@
   <title>Craig Simpson – Cloud Architect / Engineer</title>
   <link rel="icon" type="image/x-icon" href="https://tricloud.tech/docs/assets/pics/favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     * {
@@ -15,127 +15,385 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --bg: #05060f;
+      --panel: rgba(255, 255, 255, 0.04);
+      --panel-strong: rgba(255, 255, 255, 0.07);
+      --text: #e9edf7;
+      --muted: #9aa4ba;
+      --accent: #4fd1c5;
+      --accent-2: #7dd3fc;
+      --stroke: rgba(255, 255, 255, 0.08);
+    }
+
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: #0e0e10;
-      color: #e5e5e5;
+      font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(79, 209, 197, 0.08), transparent 32%),
+                  radial-gradient(circle at 80% 0%, rgba(125, 211, 252, 0.07), transparent 28%),
+                  linear-gradient(145deg, #03040b 0%, #05060f 60%, #070a18 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 3rem 1.5rem 2.5rem;
+      display: flex;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: '';
+      position: absolute;
+      width: 42vw;
+      height: 42vw;
+      background: radial-gradient(circle, rgba(79, 209, 197, 0.12) 0%, rgba(5, 6, 15, 0) 55%);
+      filter: blur(40px);
+      z-index: 0;
+    }
+
+    body::before { top: -12vw; left: -10vw; }
+    body::after { bottom: -14vw; right: -6vw; background: radial-gradient(circle, rgba(125, 211, 252, 0.12) 0%, rgba(5, 6, 15, 0) 55%); }
+
+    main {
+      width: 100%;
+      max-width: 1100px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: start;
-      min-height: 100vh;
-      padding: 2rem 1rem;
+      gap: 1.5rem;
+      position: relative;
+      z-index: 1;
     }
 
-    header, section {
-      background: #1a1a1d;
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--stroke);
+      border-radius: 20px;
       padding: 2rem;
-      border-radius: 1rem;
-      max-width: 700px;
-      width: 100%;
-      margin-bottom: 2rem;
-      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(10px);
     }
 
-    img {
-      border-radius: 100%;
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border: 3px solid #333;
-      margin-bottom: 1.5rem;
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.75rem;
+      align-items: center;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
     }
 
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
+      font-size: clamp(2.4rem, 3vw, 3.2rem);
+      margin-bottom: 0.4rem;
+      line-height: 1.05;
     }
 
     h2 {
-      font-size: 1.75rem;
-      margin-bottom: 1rem;
-      color: #dcdcdc;
+      font-size: 1.4rem;
+      margin-bottom: 0.6rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+      color: #c7d3e9;
     }
 
     p {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .lede {
       font-size: 1.1rem;
-      line-height: 1.6;
-      color: #bbbbbb;
-      margin: 0.5rem 0;
+      color: #ccd6ee;
+      margin: 0.75rem 0 1.25rem;
     }
 
-    a {
-      color: #60a5fa;
+    .meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 0.9rem;
+      background: var(--panel-strong);
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      color: #d5def5;
+      font-size: 0.95rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 0.6rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.75rem 1.15rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.98rem;
       text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--stroke);
+      transition: transform 0.18s ease, background 0.25s ease, border-color 0.25s ease;
     }
 
-    a:hover {
-      text-decoration: underline;
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #041018;
+      border-color: transparent;
     }
+
+    .btn.ghost {
+      background: var(--panel-strong);
+    }
+
+    .btn.link {
+      background: transparent;
+      border-color: transparent;
+      padding-left: 0;
+    }
+
+    .profile {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-start;
+      gap: 1rem;
+    }
+
+    .profile-frame {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background: radial-gradient(circle at 25% 25%, rgba(79, 209, 197, 0.22), rgba(5, 6, 15, 0.2));
+      border: 1px solid var(--stroke);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+    }
+
+    .profile-frame::after {
+      content: '';
+      position: absolute;
+      inset: 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      pointer-events: none;
+    }
+
+    img {
+      border-radius: 18px;
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border: 3px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .tagline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      color: #c2cee6;
+      font-size: 0.95rem;
+    }
+
+    .pill {
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      background: var(--panel-strong);
+      border: 1px solid var(--stroke);
+      color: #c7d6f5;
+      font-size: 0.9rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.3rem;
+    }
+
+    .section-eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      background: var(--panel-strong);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .panel {
+      background: var(--panel-strong);
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 1.2rem 1.3rem;
+      height: 100%;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .list strong {
+      color: #d8e3fb;
+    }
+
+    .links-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .links-inline a {
+      color: var(--accent-2);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .links-inline a:hover { text-decoration: underline; }
 
     .social-links {
       display: flex;
-      justify-content: center;
-      gap: 1.25rem;
-      margin-top: 2rem;
+      justify-content: flex-start;
+      gap: 0.9rem;
+      margin-top: 0.8rem;
     }
 
     .social-links a {
-      color: #e5e5e5;
-      font-size: 1.6rem;
-      transition: color 0.3s ease;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #dfe7fb;
+      background: var(--panel-strong);
+      border: 1px solid var(--stroke);
+      transition: transform 0.18s ease, border-color 0.25s ease, color 0.25s ease;
     }
 
     .social-links a:hover {
-      color: #60a5fa;
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
     .footer {
       text-align: center;
-      font-size: 0.85rem;
-      color: #666;
-      margin-top: 3rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 820px) {
+      body { padding-top: 2.5rem; }
+      .hero { grid-template-columns: 1fr; }
+      .profile { align-items: flex-start; }
+      .profile-frame { width: 100%; max-width: 360px; }
+      main { gap: 1.2rem; }
+    }
+
+    @media (max-width: 520px) {
+      .card { padding: 1.5rem; }
+      .cta-row { flex-direction: column; align-items: stretch; }
+      .btn { width: 100%; justify-content: center; }
     }
   </style>
 </head>
 <body>
 
-  <img src="docs/assets/pics/profile-pic.jpeg" alt="Craig Simpson profile picture" />
-
-  <header>
-    <h1>Craig Simpson</h1><br>
-    <p><strong>Lead Cloud Architect / Engineer</strong></p><br>
-    <p class="summary">Substantial production experience designing and operating cloud platforms (AWS, Azure, OpenStack) and container platforms (OpenShift / Kubernetes).<br><br>Specialises in infrastructure automation, reliability engineering and secure, scalable systems.</p><br>
-    <p class="meta">Based in the UK — open to remote or hybrid roles.</p>
-  </header>
-
-  <section>
-    <h2>Professional Background / Experience</h2>
-    <p></p>
-    <p>Senior DevOps / Platform / Infrastructure Engineer with OpenStack Architecture expertise.</p>
-    <p>Past employers: <em>Bauer Media, Rackspace, Capgemini, HMRC, WWT, Telefonica, T-Mobile, SDAIA, KX Systems</em>.</p>
-    <div style="text-align:center">
-      <p><a href="https://lucid.app/documents/embedded/8dc5c3f2-b5db-450e-8ea2-1a61122e7f2f?invitationId=inv_5ae14556-782a-4a88-942c-0cf7cbb019d2" target="_blank">How did I automate this site?</a></p>
+  <main>
+    <header class="card hero">
+      <div>
+        <div class="eyebrow">Lead Cloud Architect / Engineer</div>
+        <h1>Craig Simpson</h1>
+        <p class="lede">Substantial production experience designing and operating cloud platforms (AWS, Azure, OpenStack) and container platforms (OpenShift / Kubernetes). Specialises in infrastructure automation, reliability engineering and secure, scalable systems.</p>
+        <div class="meta"><i class="fa-regular fa-compass"></i> Based in the UK — open to remote or hybrid roles.</div>
+        <div class="cta-row">
+          <a class="btn primary" href="https://tricloud.tech/docs/assets/CraigSimpson-LeadArchitect-CV.pdf" target="_blank" rel="noopener">Resume</a>
+          <a class="btn ghost" href="https://tricloud.tech/docs/assets/Craig-Simpson-Projects-Consultations.pdf" target="_blank" rel="noopener">Previous Projects / Engagements</a>
+          <a class="btn link" href="https://lucid.app/documents/embedded/8dc5c3f2-b5db-450e-8ea2-1a61122e7f2f?invitationId=inv_5ae14556-782a-4a88-942c-0cf7cbb019d2" target="_blank" rel="noopener">
+            How did I automate this site? <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+          </a>
+        </div>
+        <div class="social-links">
+          <a href="https://github.com/OldManYellsAtK8s" target="_blank" title="GitHub" rel="noopener"><i class="fab fa-github"></i></a>
+          <a href="https://linkedin.com/in/craig-simpson-51a67a58/" target="_blank" title="LinkedIn" rel="noopener"><i class="fab fa-linkedin"></i></a>
+          <a href="https://instagram.com/craigsimpson85" target="_blank" title="Instagram" rel="noopener"><i class="fab fa-instagram"></i></a>
+        </div>
       </div>
-    <div style="text-align:center">
-    <p><a href="https://tricloud.tech/docs/assets/CraigSimpson-LeadArchitect-CV.pdf" target="_blank">Resume</a></p>
+      <div class="profile">
+        <div class="profile-frame">
+          <img src="docs/assets/pics/profile-pic.jpeg" alt="Craig Simpson profile picture" />
+        </div>
+        <div class="tagline">
+          <span class="pill">AWS</span>
+          <span class="pill">Azure</span>
+          <span class="pill">OpenStack</span>
+          <span class="pill">Kubernetes &amp; OpenShift</span>
+          <span class="pill">Infrastructure Automation</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="section-header">
+        <span class="section-eyebrow">Professional Background</span>
+        <h2>Experience &amp; Engagements</h2>
+      </div>
+      <div class="grid">
+        <div class="panel">
+          <h3>What I do</h3>
+          <div class="list">
+            <p>Senior DevOps / Platform / Infrastructure Engineer with OpenStack Architecture expertise.</p>
+            <p>Substantial production experience designing and operating cloud platforms (AWS, Azure, OpenStack) and container platforms (OpenShift / Kubernetes).</p>
+            <p>Specialises in infrastructure automation, reliability engineering and secure, scalable systems.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Who I've partnered with</h3>
+          <p>Past employers: <em>Bauer Media, Rackspace, Capgemini, HMRC, WWT, Telefonica, T-Mobile, SDAIA, KX Systems</em>.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      &copy; 2025 Craig Simpson - Tricloud Tech<br>
+      <small>Company number 16903834</small>
     </div>
-    <div style="text-align:center">
-      <p><a href="https://tricloud.tech/docs/assets/Craig-Simpson-Projects-Consultations.pdf" target="_blank">Previous Projects / Engagements</a></p>
-      </div>
-  </section>
-
-  <div class="social-links">
-    <a href="https://github.com/OldManYellsAtK8s" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-    <a href="https://linkedin.com/in/craig-simpson-51a67a58/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-    <a href="https://instagram.com/craigsimpson85" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-  </div>
-
-  <div class="footer">
-    &copy; 2025 Craig Simpson  Tricloud Tech<br>
-    <small>Company number 16903834</small>
-  </div>
+  </main>
 
 </body>
 </html>
-
