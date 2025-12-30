@@ -16,21 +16,21 @@
     }
 
     :root {
-      --bg: #05060f;
-      --panel: rgba(255, 255, 255, 0.04);
-      --panel-strong: rgba(255, 255, 255, 0.07);
-      --text: #e9edf7;
-      --muted: #9aa4ba;
-      --accent: #4fd1c5;
-      --accent-2: #7dd3fc;
-      --stroke: rgba(255, 255, 255, 0.08);
+      --bg: #002b36;
+      --panel: rgba(7, 54, 66, 0.88);
+      --panel-strong: rgba(7, 54, 66, 0.94);
+      --text: #fdf6e3;
+      --muted: #93a1a1;
+      --accent: #2aa198;
+      --accent-2: #268bd2;
+      --stroke: rgba(147, 161, 161, 0.25);
     }
 
     body {
       font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
-      background: radial-gradient(circle at 20% 20%, rgba(79, 209, 197, 0.08), transparent 32%),
-                  radial-gradient(circle at 80% 0%, rgba(125, 211, 252, 0.07), transparent 28%),
-                  linear-gradient(145deg, #03040b 0%, #05060f 60%, #070a18 100%);
+      background: radial-gradient(circle at 18% 18%, rgba(42, 161, 152, 0.16), transparent 32%),
+                  radial-gradient(circle at 82% 6%, rgba(38, 139, 210, 0.16), transparent 28%),
+                  linear-gradient(145deg, #002129 0%, #002b36 55%, #073642 100%);
       color: var(--text);
       min-height: 100vh;
       padding: 3rem 1.5rem 2.5rem;
@@ -46,13 +46,13 @@
       position: absolute;
       width: 42vw;
       height: 42vw;
-      background: radial-gradient(circle, rgba(79, 209, 197, 0.12) 0%, rgba(5, 6, 15, 0) 55%);
-      filter: blur(40px);
+      background: radial-gradient(circle, rgba(42, 161, 152, 0.24) 0%, rgba(0, 43, 54, 0) 55%);
+      filter: blur(60px);
       z-index: 0;
     }
 
     body::before { top: -12vw; left: -10vw; }
-    body::after { bottom: -14vw; right: -6vw; background: radial-gradient(circle, rgba(125, 211, 252, 0.12) 0%, rgba(5, 6, 15, 0) 55%); }
+    body::after { bottom: -14vw; right: -6vw; background: radial-gradient(circle, rgba(38, 139, 210, 0.24) 0%, rgba(0, 43, 54, 0) 55%); }
 
     main {
       width: 100%;
@@ -69,7 +69,7 @@
       border: 1px solid var(--stroke);
       border-radius: 20px;
       padding: 2rem;
-      box-shadow: 0 10px 60px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
       backdrop-filter: blur(10px);
     }
 
@@ -102,7 +102,7 @@
     h3 {
       font-size: 1.1rem;
       margin-bottom: 0.4rem;
-      color: #c7d3e9;
+      color: #eee8d5;
     }
 
     p {
@@ -113,7 +113,7 @@
 
     .lede {
       font-size: 1.1rem;
-      color: #ccd6ee;
+      color: #e1e8d0;
       margin: 0.75rem 0 1.25rem;
     }
 
@@ -125,7 +125,7 @@
       background: var(--panel-strong);
       border: 1px solid var(--stroke);
       border-radius: 999px;
-      color: #d5def5;
+      color: #fdf6e3;
       font-size: 0.95rem;
       margin-bottom: 1.1rem;
     }
@@ -155,7 +155,7 @@
 
     .btn.primary {
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-      color: #041018;
+      color: #002b36;
       border-color: transparent;
     }
 
@@ -184,7 +184,7 @@
       display: grid;
       place-items: center;
       border-radius: 24px;
-      background: radial-gradient(circle at 25% 25%, rgba(79, 209, 197, 0.22), rgba(5, 6, 15, 0.2));
+      background: radial-gradient(circle at 25% 25%, rgba(42, 161, 152, 0.18), rgba(38, 139, 210, 0.12));
       border: 1px solid var(--stroke);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
       overflow: hidden;
@@ -204,7 +204,7 @@
       width: 160px;
       height: 160px;
       object-fit: cover;
-      border: 3px solid rgba(255, 255, 255, 0.08);
+      border: 3px solid rgba(253, 246, 227, 0.08);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
 
@@ -213,7 +213,7 @@
       flex-wrap: wrap;
       gap: 0.5rem;
       margin-top: 1rem;
-      color: #c2cee6;
+      color: #e1e8d0;
       font-size: 0.95rem;
     }
 
@@ -222,7 +222,7 @@
       border-radius: 999px;
       background: var(--panel-strong);
       border: 1px solid var(--stroke);
-      color: #c7d6f5;
+      color: #fdf6e3;
       font-size: 0.9rem;
     }
 
@@ -266,7 +266,24 @@
     }
 
     .list strong {
-      color: #d8e3fb;
+      color: #fdf6e3;
+    }
+
+    .list.pairs {
+      gap: 0.6rem;
+    }
+
+    .list.pairs .pair {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.5rem;
+      color: inherit;
+    }
+
+    .list.pairs .pair span {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--muted);
     }
 
     .links-inline {
@@ -297,7 +314,7 @@
       border-radius: 12px;
       display: grid;
       place-items: center;
-      color: #dfe7fb;
+      color: #fdf6e3;
       background: var(--panel-strong);
       border: 1px solid var(--stroke);
       transition: transform 0.18s ease, border-color 0.25s ease, color 0.25s ease;
@@ -361,8 +378,11 @@
         <div class="tagline">
           <span class="pill">AWS</span>
           <span class="pill">Azure</span>
+          <span class="pill">DevOps</span>
           <span class="pill">OpenStack</span>
-          <span class="pill">Kubernetes &amp; OpenShift</span>
+          <span class="pill">OpenShift</span>
+          <span class="pill">Kubernetes</span>
+          <span class="pill">KubeVirt</span>
           <span class="pill">Infrastructure Automation</span>
         </div>
       </div>
@@ -377,20 +397,28 @@
         <div class="panel">
           <h3>What I do</h3>
           <div class="list">
-            <p>Senior DevOps / Platform / Infrastructure Engineer with OpenStack Architecture expertise.</p>
+            <p>Infrastructure Engineer / Architect with deep OpenStack and OpenShift expertise.</p>
+            <p></p>
             <p>Substantial production experience designing and operating cloud platforms (AWS, Azure, OpenStack) and container platforms (OpenShift / Kubernetes).</p>
+            <p></p>
             <p>Specialises in infrastructure automation, reliability engineering and secure, scalable systems.</p>
           </div>
         </div>
         <div class="panel">
-          <h3>Who I've partnered with</h3>
-          <p>Past employers: <em>Bauer Media, Rackspace, Capgemini, HMRC, WWT, Telefonica, T-Mobile, SDAIA, KX Systems</em>.</p>
+          <h3>Who I've Partnered With</h3>
+          <div class="list pairs">
+            <p></p>
+            <div class="pair"><span>Bauer Media</span><span>Rackspace</span></div>
+            <div class="pair"><span>Capgemini</span><span>HMRC</span></div>
+            <div class="pair"><span>KX Systems</span><span>Motorola</span></div>
+            <div class="pair"><span>Telefonica</span><span>T-Mobile</span></div>
+          </div>
         </div>
       </div>
     </section>
 
     <div class="footer">
-      &copy; 2025 Craig Simpson - Tricloud Tech<br>
+      &copy; 2026 Craig Simpson - Tricloud Tech<br>
       <small>Company number 16903834</small>
     </div>
   </main>
