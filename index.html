@@ -209,6 +209,16 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
 
+    img.badge {
+      width: auto;
+      height: 20px;
+      border-radius: 4px;
+      border: none;
+      box-shadow: none;
+      object-fit: unset;
+      vertical-align: middle;
+    }
+
     .tagline {
       display: flex;
       flex-wrap: wrap;
@@ -430,7 +440,7 @@
             <p>A local development environment for developing against the BookStack API, running in OpenShift Local. Installs completely via a GitHub Action triggered on your local laptop using a self-hosted GitHub Runner — zero manual setup.</p>
             <div class="links-inline">
               <a href="https://oldmanyellsatk8s.github.io/dev-bookstack-site/" target="_blank" rel="noopener">Documentation <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8em;"></i></a>
-              <a href="https://github.com/OldManYellsAtK8s/dev-bookstack/actions/workflows/ci.yml" target="_blank" rel="noopener"><img src="docs/assets/badges/dev-bookstack-ci.svg" alt="CI" style="vertical-align:middle;border-radius:4px;"></a>
+              <a href="https://github.com/OldManYellsAtK8s/dev-bookstack/actions/workflows/ci.yml" target="_blank" rel="noopener"><img src="docs/assets/badges/dev-bookstack-ci.svg" alt="CI" class="badge"></a>
             </div>
           </div>
         </div>
@@ -439,9 +449,9 @@
           <div class="list">
             <p>A multi-AZ, fault-tolerant and highly available implementation of BookStack on AWS. Delivered via a CI/CD pipeline wrapped around Infrastructure-as-Code — production-grade from day one.</p>
             <div class="links-inline">
-              <a href="https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/drift.yml" target="_blank" rel="noopener"><img src="docs/assets/badges/aws-bookstack-drift.svg" alt="Drift Detection" style="vertical-align:middle;border-radius:4px;"></a>
-              <a href="https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/ci.yml" target="_blank" rel="noopener"><img src="docs/assets/badges/aws-bookstack-ci.svg" alt="Terraform CI" style="vertical-align:middle;border-radius:4px;"></a>
-              <a href="https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/cd.yml" target="_blank" rel="noopener"><img src="docs/assets/badges/aws-bookstack-cd.svg" alt="Terraform CD — Deploy" style="vertical-align:middle;border-radius:4px;"></a>
+              <a href="https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/drift.yml" target="_blank" rel="noopener"><img src="docs/assets/badges/aws-bookstack-drift.svg" alt="Drift Detection" class="badge"></a>
+              <a href="https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/ci.yml" target="_blank" rel="noopener"><img src="docs/assets/badges/aws-bookstack-ci.svg" alt="Terraform CI" class="badge"></a>
+              <a href="https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/cd.yml" target="_blank" rel="noopener"><img src="docs/assets/badges/aws-bookstack-cd.svg" alt="Terraform CD — Deploy" class="badge"></a>
             </div>
           </div>
         </div>
