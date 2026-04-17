@@ -84,6 +84,7 @@ jobs:
         id: claude
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          WORKFLOW_NAME: ${{ inputs.failed_workflow_name }}
         run: |
           python3 << 'PYEOF'
           import json, os, re, urllib.request, urllib.error, sys
@@ -178,8 +179,6 @@ jobs:
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f"has_changes={'true' if changes_list else 'false'}\n")
           PYEOF
-        env:
-          WORKFLOW_NAME: ${{ inputs.failed_workflow_name }}
 
       - name: Apply file changes
         if: steps.claude.outputs.has_changes == 'true'
