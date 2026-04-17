@@ -24,7 +24,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'claude-autofix.yml',
-              ref: context.repo.defaultBranch,
+              ref: 'main',
               inputs: {
                 failed_run_id: String(${{ github.event.workflow_run.id }}),
                 failed_workflow_name: '${{ github.event.workflow_run.name }}',
