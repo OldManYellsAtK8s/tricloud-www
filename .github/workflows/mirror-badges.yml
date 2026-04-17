@@ -13,27 +13,35 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch badges
+      - name: Generate badges from workflow status
         env:
           GH_TOKEN: ${{ secrets.BADGE_TOKEN }}
         run: |
           mkdir -p docs/assets/badges
-          fetch_badge() {
-            local url="$1"
-            local out="$2"
-            curl -fsSL \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              -H "Accept: image/svg+xml" \
-              "$url" -o "$out"
+
+          get_badge_svg() {
+            local repo="$1"
+            local workflow="$2"
+            local label="$3"
+            local out="$4"
+
+            conclusion=$(gh api "repos/OldManYellsAtK8s/${repo}/actions/workflows/${workflow}/runs?per_page=1&branch=main" \
+              --jq '.workflow_runs[0].conclusion' 2>/dev/null || echo "unknown")
+
+            case "$conclusion" in
+              success)  color="brightgreen" ; status="passing" ;;
+              failure)  color="red"         ; status="failing" ;;
+              cancelled) color="yellow"     ; status="cancelled" ;;
+              *)        color="lightgrey"   ; status="unknown" ;;
+            esac
+
+            curl -fsSL "https://img.shields.io/badge/$(python3 -c "import urllib.parse; print(urllib.parse.quote('${label}'))")-${status}-${color}.svg" -o "$out"
           }
-          fetch_badge "https://github.com/OldManYellsAtK8s/dev-bookstack/actions/workflows/ci.yml/badge.svg?branch=main" \
-            docs/assets/badges/dev-bookstack-ci.svg
-          fetch_badge "https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/drift.yml/badge.svg" \
-            docs/assets/badges/aws-bookstack-drift.svg
-          fetch_badge "https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/ci.yml/badge.svg" \
-            docs/assets/badges/aws-bookstack-ci.svg
-          fetch_badge "https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/cd.yml/badge.svg" \
-            docs/assets/badges/aws-bookstack-cd.svg
+
+          get_badge_svg "dev-bookstack"  "ci.yml"    "CI"                  "docs/assets/badges/dev-bookstack-ci.svg"
+          get_badge_svg "aws-bookstack"  "drift.yml" "Drift Detection"     "docs/assets/badges/aws-bookstack-drift.svg"
+          get_badge_svg "aws-bookstack"  "ci.yml"    "Terraform CI"        "docs/assets/badges/aws-bookstack-ci.svg"
+          get_badge_svg "aws-bookstack"  "cd.yml"    "Terraform CD-Deploy" "docs/assets/badges/aws-bookstack-cd.svg"
 
       - name: Commit updated badges
         run: |
