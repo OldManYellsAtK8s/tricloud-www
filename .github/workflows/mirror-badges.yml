@@ -1,0 +1,44 @@
+name: Mirror CI Badges
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch badges
+        env:
+          GH_TOKEN: ${{ secrets.BADGE_TOKEN }}
+        run: |
+          mkdir -p docs/assets/badges
+          fetch_badge() {
+            local url="$1"
+            local out="$2"
+            curl -fsSL \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: image/svg+xml" \
+              "$url" -o "$out"
+          }
+          fetch_badge "https://github.com/OldManYellsAtK8s/dev-bookstack/actions/workflows/ci.yml/badge.svg?branch=main" \
+            docs/assets/badges/dev-bookstack-ci.svg
+          fetch_badge "https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/drift.yml/badge.svg" \
+            docs/assets/badges/aws-bookstack-drift.svg
+          fetch_badge "https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/ci.yml/badge.svg" \
+            docs/assets/badges/aws-bookstack-ci.svg
+          fetch_badge "https://github.com/OldManYellsAtK8s/aws-bookstack/actions/workflows/cd.yml/badge.svg" \
+            docs/assets/badges/aws-bookstack-cd.svg
+
+      - name: Commit updated badges
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/assets/badges/
+          git diff --cached --quiet || git commit -m "chore: mirror CI badges"
+          git push
