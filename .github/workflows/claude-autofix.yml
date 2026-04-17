@@ -1,0 +1,297 @@
+name: Claude AutoFix
+
+on:
+  workflow_dispatch:
+    inputs:
+      failed_run_id:
+        description: 'ID of the failed workflow run'
+        required: true
+        type: string
+      failed_workflow_name:
+        description: 'Name of the failed workflow'
+        required: true
+        type: string
+      failed_branch:
+        description: 'Branch the failure occurred on'
+        required: true
+        type: string
+      failed_sha:
+        description: 'Commit SHA that triggered the failure'
+        required: true
+        type: string
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout failed branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.failed_sha }}
+          fetch-depth: 0
+
+      - name: Collect error logs
+        id: logs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh run view ${{ inputs.failed_run_id }} --log-failed > /tmp/error_logs.txt 2>&1 || true
+          echo "Log length: $(wc -l < /tmp/error_logs.txt) lines"
+          # Truncate to last 300 lines to stay within API limits
+          tail -300 /tmp/error_logs.txt > /tmp/error_logs_trimmed.txt
+
+      - name: Collect repository context
+        id: context
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Files changed in the failing commit
+          git diff HEAD~1 --name-only 2>/dev/null > /tmp/changed_files.txt || \
+            git show --name-only --format="" HEAD > /tmp/changed_files.txt
+
+          # Build a JSON object of changed file contents (max 50KB each)
+          python3 << 'PYEOF'
+          import json, os, subprocess
+
+          with open('/tmp/changed_files.txt') as f:
+              changed = [l.strip() for l in f if l.strip()]
+
+          files = {}
+          for path in changed:
+              if os.path.isfile(path) and os.path.getsize(path) < 51200:
+                  with open(path) as f:
+                      files[path] = f.read()
+
+          # Also include workflow files for context
+          for root, dirs, filenames in os.walk('.github/workflows'):
+              for name in filenames:
+                  p = os.path.join(root, name)
+                  if p not in files and os.path.getsize(p) < 51200:
+                      with open(p) as f:
+                          files[p] = f.read()
+
+          with open('/tmp/repo_context.json', 'w') as f:
+              json.dump(files, f)
+
+          print(f"Collected {len(files)} files for context")
+          PYEOF
+
+      - name: Call Claude API to analyse and fix
+        id: claude
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python3 << 'PYEOF'
+          import json, os, re, urllib.request, urllib.error, sys
+
+          with open('/tmp/error_logs_trimmed.txt') as f:
+              error_logs = f.read()
+
+          with open('/tmp/repo_context.json') as f:
+              repo_files = json.load(f)
+
+          files_block = "\n\n".join(
+              f"### {path}\n```\n{content}\n```"
+              for path, content in repo_files.items()
+          )
+
+          prompt = f"""You are an expert DevOps and software engineer. A GitHub Actions CI workflow has failed and you must fix it.
+
+          Failed workflow: {os.environ.get('WORKFLOW_NAME', 'unknown')}
+
+          ## Error logs
+          ```
+          {error_logs}
+          ```
+
+          ## Repository files
+          {files_block}
+
+          ## Instructions
+          Analyse the error logs carefully. Identify the root cause and provide a minimal, targeted fix.
+
+          Respond using EXACTLY this format — no other text outside the tags:
+
+          <reasoning>
+          One paragraph explaining the root cause and what the fix does.
+          </reasoning>
+          <commit_message>
+          A concise commit message (imperative mood, under 72 chars) summarising the fix.
+          </commit_message>
+          <changes>
+          [
+            {{"file": "relative/path/to/file", "content": "COMPLETE new file content — not a diff"}}
+          ]
+          </changes>
+
+          If no file change can fix this (e.g. an external service outage), output an empty array for changes and explain in reasoning.
+          """
+
+          payload = json.dumps({
+              "model": "claude-sonnet-4-6",
+              "max_tokens": 8192,
+              "messages": [{"role": "user", "content": prompt}]
+          }).encode()
+
+          req = urllib.request.Request(
+              "https://api.anthropic.com/v1/messages",
+              data=payload,
+              headers={
+                  "x-api-key": os.environ["ANTHROPIC_API_KEY"],
+                  "anthropic-version": "2023-06-01",
+                  "content-type": "application/json"
+              }
+          )
+
+          try:
+              with urllib.request.urlopen(req, timeout=120) as resp:
+                  result = json.loads(resp.read())
+          except urllib.error.HTTPError as e:
+              print(f"API error: {e.code} {e.read().decode()}")
+              sys.exit(1)
+
+          text = result["content"][0]["text"]
+
+          reasoning = re.search(r"<reasoning>(.*?)</reasoning>", text, re.DOTALL)
+          commit_msg = re.search(r"<commit_message>(.*?)</commit_message>", text, re.DOTALL)
+          changes = re.search(r"<changes>(.*?)</changes>", text, re.DOTALL)
+
+          reasoning_text = reasoning.group(1).strip() if reasoning else "No reasoning provided."
+          commit_text = commit_msg.group(1).strip() if commit_msg else "fix: automated fix by Claude AutoFix"
+          changes_list = json.loads(changes.group(1).strip()) if changes else []
+
+          print(f"Claude identified {len(changes_list)} file(s) to change.")
+
+          with open('/tmp/claude_reasoning.txt', 'w') as f:
+              f.write(reasoning_text)
+
+          with open('/tmp/claude_commit_msg.txt', 'w') as f:
+              f.write(commit_text)
+
+          with open('/tmp/claude_changes.json', 'w') as f:
+              json.dump(changes_list, f)
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"has_changes={'true' if changes_list else 'false'}\n")
+          PYEOF
+        env:
+          WORKFLOW_NAME: ${{ inputs.failed_workflow_name }}
+
+      - name: Apply file changes
+        if: steps.claude.outputs.has_changes == 'true'
+        run: |
+          python3 << 'PYEOF'
+          import json, os
+
+          with open('/tmp/claude_changes.json') as f:
+              changes = json.load(f)
+
+          for change in changes:
+              path = change['file']
+              content = change['content']
+              os.makedirs(os.path.dirname(path) if os.path.dirname(path) else '.', exist_ok=True)
+              with open(path, 'w') as f:
+                  f.write(content)
+              print(f"Applied: {path}")
+          PYEOF
+
+      - name: Validate fix
+        if: steps.claude.outputs.has_changes == 'true'
+        run: |
+          # Validate HTML if index.html was changed
+          if grep -q "index.html" /tmp/claude_changes.json 2>/dev/null; then
+            python3 -c "
+          import html.parser, sys
+          class V(html.parser.HTMLParser):
+              pass
+          with open('index.html') as f:
+              V().feed(f.read())
+          print('HTML parse OK')
+          "
+          fi
+
+          # Validate workflow YAML syntax if any workflow files changed
+          python3 << 'PYEOF'
+          import json, yaml, sys
+          with open('/tmp/claude_changes.json') as f:
+              changes = json.load(f)
+          for change in changes:
+              if change['file'].endswith('.yml') or change['file'].endswith('.yaml'):
+                  try:
+                      yaml.safe_load(change['content'])
+                      print(f"YAML valid: {change['file']}")
+                  except yaml.YAMLError as e:
+                      print(f"YAML invalid: {change['file']}: {e}")
+                      sys.exit(1)
+          PYEOF
+
+      - name: Install PyYAML for validation
+        if: steps.claude.outputs.has_changes == 'true'
+        run: pip install pyyaml -q
+
+      - name: Create fix branch and open PR
+        if: steps.claude.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="autofix/run-${{ inputs.failed_run_id }}"
+          COMMIT_MSG=$(cat /tmp/claude_commit_msg.txt)
+          REASONING=$(cat /tmp/claude_reasoning.txt)
+
+          git config user.name "claude-autofix[bot]"
+          git config user.email "claude-autofix[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "$COMMIT_MSG
+
+          Auto-fixed by Claude AutoFix (run ${{ inputs.failed_run_id }}).
+
+          Reasoning:
+          $REASONING
+
+          Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --title "autofix: $COMMIT_MSG" \
+            --body "$(cat << EOF
+          ## AutoFix — ${{ inputs.failed_workflow_name }}
+
+          This PR was automatically generated by the Claude AutoFix pipeline after a CI failure.
+
+          **Failed run:** [${{ inputs.failed_run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ inputs.failed_run_id }})
+          **Branch:** \`${{ inputs.failed_branch }}\`
+          **Commit:** \`${{ inputs.failed_sha }}\`
+
+          ## Claude's Reasoning
+
+          $REASONING
+
+          ## What was changed
+
+          $(python3 -c "
+          import json
+          with open('/tmp/claude_changes.json') as f:
+              changes = json.load(f)
+          for c in changes:
+              print(f'- \`{c[\"file\"]}\`')
+          ")
+
+          ---
+          🤖 Generated by [Claude AutoFix](https://github.com/${{ github.repository }}/actions/workflows/claude-autofix.yml)
+          EOF
+          )" \
+            --base "${{ inputs.failed_branch }}" \
+            --head "$BRANCH"
+
+      - name: Report no fix available
+        if: steps.claude.outputs.has_changes == 'false'
+        run: |
+          echo "Claude could not identify a file-based fix."
+          echo "Reasoning: $(cat /tmp/claude_reasoning.txt)"
