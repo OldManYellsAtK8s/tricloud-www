@@ -1,12 +1,15 @@
 name: Mirror CI Badges
 
 on:
-  schedule:
-    - cron: '* 7 * * *'
+  workflow_run:
+    workflows: ["CodeQL"]
+    types: [completed]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
   mirror:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
