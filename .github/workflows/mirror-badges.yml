@@ -35,7 +35,7 @@ jobs:
               *)        color="lightgrey"   ; status="unknown" ;;
             esac
 
-            curl -fsSL "https://img.shields.io/badge/$(python3 -c "import urllib.parse; print(urllib.parse.quote('${label}'))")-${status}-${color}.svg" -o "$out"
+            curl -fsSL "https://img.shields.io/badge/$(python3 -c "import urllib.parse; print(urllib.parse.quote('${label}'.replace('-', '--')))")-${status}-${color}.svg" -o "$out"
           }
 
           get_badge_svg "dev-bookstack"  "ci.yml"    "CI"                  "docs/assets/badges/dev-bookstack-ci.svg"
