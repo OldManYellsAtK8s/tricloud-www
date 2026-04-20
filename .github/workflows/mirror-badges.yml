@@ -15,10 +15,9 @@ jobs:
 
       - name: Generate badges from workflow status
         env:
-          BADGE_TOKEN_B64: ${{ secrets.BADGE_TOKEN }}
+          GH_TOKEN: ${{ secrets.BADGE_TOKEN }}
         run: |
           mkdir -p docs/assets/badges
-          GH_TOKEN=$(echo "$BADGE_TOKEN_B64" | base64 -d)
 
           get_badge_svg() {
             local repo="$1"
