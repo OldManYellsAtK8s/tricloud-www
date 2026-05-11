@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tricloud-www
+  labels:
+    app: tricloud-www
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tricloud-www
+  template:
+    metadata:
+      labels:
+        app: tricloud-www
+    spec:
+      containers:
+        - name: tricloud-www
+          # Image is patched to the exact built SHA by deploy-local.sh
+          image: image-registry.openshift-image-registry.svc:5000/tricloud-local/tricloud-www:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

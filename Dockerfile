@@ -1,3 +1,2 @@
-FROM nginx
-COPY /maverix-theme /usr/share/nginx/html
-
+FROM nginxinc/nginx-unprivileged:alpine
+COPY . /usr/share/nginx/html
