@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tricloud-www
+  labels:
+    app: tricloud-www
+spec:
+  selector:
+    app: tricloud-www
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: ClusterIP

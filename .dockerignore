@@ -1,0 +1,9 @@
+.git
+.github
+.gitignore
+.DS_Store
+.dockerignore
+Dockerfile
+README.md
+deploy
+deploy-local.sh

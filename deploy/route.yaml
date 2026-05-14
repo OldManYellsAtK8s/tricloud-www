@@ -1,0 +1,12 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: tricloud-www
+  labels:
+    app: tricloud-www
+spec:
+  to:
+    kind: Service
+    name: tricloud-www
+  port:
+    targetPort: 8080
