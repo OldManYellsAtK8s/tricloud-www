@@ -348,6 +348,121 @@
       color: var(--accent);
     }
 
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .blog-card {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.18s ease, border-color 0.25s ease;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+
+    .blog-thumb {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 14px 14px 0 0;
+      border: none;
+      box-shadow: none;
+    }
+
+    .blog-card-body {
+      padding: 1.1rem 1.2rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      flex: 1;
+    }
+
+    .blog-date {
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .blog-title {
+      font-size: 1.05rem;
+      color: #eee8d5;
+      margin-bottom: 0;
+      line-height: 1.35;
+    }
+
+    .blog-excerpt {
+      font-size: 0.93rem;
+      line-height: 1.6;
+      color: var(--muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .blog-read-more {
+      margin-top: auto;
+      padding-top: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-2);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .blog-loading {
+      color: var(--muted);
+      grid-column: 1 / -1;
+    }
+
+    .featured-card {
+      display: flex;
+      flex-direction: row;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      padding: 0;
+      transition: transform 0.18s ease, border-color 0.25s ease;
+      max-height: 300px;
+    }
+
+    .featured-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+
+    .featured-img-wrap {
+      flex-shrink: 0;
+      width: 42%;
+    }
+
+    .featured-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 14px 0 0 14px;
+      border: none;
+      box-shadow: none;
+    }
+
+    @media (max-width: 640px) {
+      .featured-card { flex-direction: column; max-height: none; }
+      .featured-img-wrap { width: 100%; height: 180px; }
+      .featured-img { border-radius: 14px 14px 0 0; }
+    }
+
     .footer {
       text-align: center;
       font-size: 0.92rem;
@@ -483,11 +598,41 @@
       </div>
     </section>
 
+    <section class="card">
+      <div class="section-header">
+        <span class="section-eyebrow">Blog</span>
+        <h2>Latest Post</h2>
+        <a class="btn ghost" style="font-size:0.9rem;padding:0.5rem 0.9rem;" href="blog.html">All posts <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      </div>
+      <div id="latest-post">
+        <p class="blog-loading">Loading…</p>
+      </div>
+    </section>
+
     <div class="footer">
       &copy; 2026 Craig Simpson - Tricloud Tech<br>
       <small>Company Number 16903834</small>
     </div>
   </main>
 
+  <script src="js/blog.js"></script>
+  <script>
+    (async () => {
+      const container = document.getElementById('latest-post');
+      try {
+        const files = await Blog.fetchPostList();
+        if (!files.length) {
+          container.innerHTML = '<p style="color:var(--muted)">No posts yet.</p>';
+          return;
+        }
+        const latest = files[0];
+        const raw    = await Blog.fetchPostContent(latest.name);
+        const { meta } = Blog.parseFrontmatter(raw);
+        container.innerHTML = Blog.featuredCard({ meta, filename: latest.name });
+      } catch {
+        Blog.renderError(container);
+      }
+    })();
+  </script>
 </body>
 </html>
