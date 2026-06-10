@@ -1,0 +1,31 @@
+
+; <<>> DiG 9.10.6 <<>> tricloud.online A +noall +answer
+;; global options: +cmd
+
+; <<>> DiG 9.10.6 <<>> tricloud.online AAAA +noall +answer
+;; global options: +cmd
+
+; <<>> DiG 9.10.6 <<>> tricloud.online CNAME +noall +answer
+;; global options: +cmd
+
+; <<>> DiG 9.10.6 <<>> tricloud.online MX +noall +answer
+;; global options: +cmd
+tricloud.online.	3600	IN	MX	10 mx00.ionos.co.uk.
+tricloud.online.	3600	IN	MX	10 mx01.ionos.co.uk.
+
+; <<>> DiG 9.10.6 <<>> tricloud.online TXT +noall +answer
+;; global options: +cmd
+tricloud.online.	3600	IN	TXT	"v=spf1 include:_spf-eu.ionos.com ~all"
+
+; <<>> DiG 9.10.6 <<>> tricloud.online NS +noall +answer
+;; global options: +cmd
+tricloud.online.	86400	IN	NS	ns1034.ui-dns.de.
+tricloud.online.	86400	IN	NS	ns1126.ui-dns.com.
+tricloud.online.	86400	IN	NS	ns1016.ui-dns.org.
+tricloud.online.	86400	IN	NS	ns1100.ui-dns.biz.
+
+; <<>> DiG 9.10.6 <<>> tricloud.online SRV +noall +answer
+;; global options: +cmd
+
+; <<>> DiG 9.10.6 <<>> tricloud.online CAA +noall +answer
+;; global options: +cmd
