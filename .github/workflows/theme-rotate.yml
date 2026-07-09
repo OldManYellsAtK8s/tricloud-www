@@ -1,0 +1,47 @@
+name: Rotate Site Theme
+
+on:
+  schedule:
+    - cron: '0 6 */2 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: theme-rotate
+  cancel-in-progress: false
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rotate to next theme
+        run: |
+          THEMES=(theme-forest-emerald.html theme-aurora-violet.html theme-graphite-sky.html)
+          CURRENT=$(jq -r '.current' .github/theme-state.json)
+
+          NEXT_INDEX=0
+          for i in "${!THEMES[@]}"; do
+            if [[ "${THEMES[$i]}" == "$CURRENT" ]]; then
+              NEXT_INDEX=$(( (i + 1) % ${#THEMES[@]} ))
+              break
+            fi
+          done
+
+          NEXT="${THEMES[$NEXT_INDEX]}"
+          echo "Rotating theme: $CURRENT -> $NEXT"
+
+          cp "$NEXT" index.html
+          jq --arg theme "$NEXT" '.current = $theme' .github/theme-state.json > /tmp/theme-state.json
+          mv /tmp/theme-state.json .github/theme-state.json
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/theme-state.json
+          git diff --cached --quiet || git commit -m "chore: rotate site theme"
+          git push

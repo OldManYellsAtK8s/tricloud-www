@@ -1,0 +1,43 @@
+
+; <<>> DiG 9.10.6 <<>> tricloud.tech A +noall +answer
+;; global options: +cmd
+tricloud.tech.		3600	IN	A	185.199.111.153
+tricloud.tech.		3600	IN	A	185.199.110.153
+tricloud.tech.		3600	IN	A	185.199.108.153
+tricloud.tech.		3600	IN	A	185.199.109.153
+
+; <<>> DiG 9.10.6 <<>> tricloud.tech AAAA +noall +answer
+;; global options: +cmd
+tricloud.tech.		3600	IN	AAAA	2606:50c0:8002::153
+tricloud.tech.		3600	IN	AAAA	2606:50c0:8003::153
+tricloud.tech.		3600	IN	AAAA	2606:50c0:8001::153
+tricloud.tech.		3600	IN	AAAA	2606:50c0:8000::153
+
+; <<>> DiG 9.10.6 <<>> tricloud.tech CNAME +noall +answer
+;; global options: +cmd
+
+; <<>> DiG 9.10.6 <<>> tricloud.tech MX +noall +answer
+;; global options: +cmd
+tricloud.tech.		3600	IN	MX	5 alt1.aspmx.l.google.com.
+tricloud.tech.		3600	IN	MX	1 aspmx.l.google.com.
+tricloud.tech.		3600	IN	MX	10 alt4.aspmx.l.google.com.
+tricloud.tech.		3600	IN	MX	5 alt2.aspmx.l.google.com.
+tricloud.tech.		3600	IN	MX	10 alt3.aspmx.l.google.com.
+
+; <<>> DiG 9.10.6 <<>> tricloud.tech TXT +noall +answer
+;; global options: +cmd
+tricloud.tech.		3600	IN	TXT	"google-site-verification=CxwGvi-5nCJVxOjzDVv9cSzyRIVF429oic-JI3eVSzU"
+tricloud.tech.		3600	IN	TXT	"v=spf1 include:_spf.google.com ~all"
+
+; <<>> DiG 9.10.6 <<>> tricloud.tech NS +noall +answer
+;; global options: +cmd
+tricloud.tech.		86400	IN	NS	ns1100.ui-dns.biz.
+tricloud.tech.		86400	IN	NS	ns1016.ui-dns.org.
+tricloud.tech.		86400	IN	NS	ns1034.ui-dns.de.
+tricloud.tech.		86400	IN	NS	ns1126.ui-dns.com.
+
+; <<>> DiG 9.10.6 <<>> tricloud.tech SRV +noall +answer
+;; global options: +cmd
+
+; <<>> DiG 9.10.6 <<>> tricloud.tech CAA +noall +answer
+;; global options: +cmd
